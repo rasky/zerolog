@@ -579,3 +579,35 @@ func TestErrorMarshalFunc(t *testing.T) {
 		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
 	}
 }
+
+func TestEventCategory(t *testing.T) {
+	const (
+		catA Category = 1 + iota
+		catB
+	)
+	defer func() {
+		SetCategory(catA, "", DebugLevel)
+		SetCategory(catB, "", DebugLevel)
+	}()
+
+	out := &bytes.Buffer{}
+	log := New(out).With().Str("foo", "bar").Logger()
+
+	SetCategory(catA, "catA", WarnLevel)
+	log.Log().Category(catA).Msg("hello world")
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"foo":"bar","category":"catA","message":"hello world"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
+	}
+
+	out.Reset()
+	log.Info().Category(catA).Msg("hello world")
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"level":"info","foo":"bar","message":"hello world"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
+	}
+
+	out.Reset()
+	log.Warn().Category(catA).Msg("hello world")
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"level":"warn","foo":"bar","category":"catA","message":"hello world"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
+	}
+}
