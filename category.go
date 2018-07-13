@@ -21,7 +21,7 @@ type categoryDef struct {
 
 var (
 	categories [maxcategories]categoryDef
-	catmx      sync.Mutex
+	catmx      sync.RWMutex
 )
 
 // SetCategory sets the name and the log level for category cat.
@@ -66,11 +66,11 @@ func shouldCategory(cat Category, lvl Level) (ok bool, name string) {
 		// category.
 		return true, ""
 	}
-	catmx.Lock()
+	catmx.RLock()
 	if lvl >= categories[cat].lvl {
 		ok = true
 		name = categories[cat].name
 	}
-	catmx.Unlock()
+	catmx.RUnlock()
 	return
 }
