@@ -527,7 +527,7 @@ type loggableError struct {
 }
 
 func (l loggableError) MarshalZerologObject(e *Event) {
-	e.Str("message", l.error.Error() + ": loggableError")
+	e.Str("message", l.error.Error()+": loggableError")
 }
 
 func TestErrorMarshalFunc(t *testing.T) {
@@ -549,7 +549,7 @@ func TestErrorMarshalFunc(t *testing.T) {
 
 	// test overriding the ErrorMarshalFunc
 	originalErrorMarshalFunc := ErrorMarshalFunc
-	defer func(){
+	defer func() {
 		ErrorMarshalFunc = originalErrorMarshalFunc
 	}()
 
