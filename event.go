@@ -124,10 +124,12 @@ func (e *Event) msg(msg string) {
 	// the nil-value for the cat field indicates no category.
 	if e.cat != 0 {
 		ok, catname := shouldCategory(e.cat, e.level)
-		if ok {
-			// category disabled for current event level.
-			e.buf = enc.AppendString(enc.AppendKey(e.buf, "category"), catname)
+		if !ok {
+			e = nil
+			return
 		}
+		// category enabled for current event level.
+		e.buf = enc.AppendString(enc.AppendKey(e.buf, "category"), catname)
 	}
 
 	if len(e.ch) > 0 {
