@@ -601,7 +601,7 @@ func TestEventCategory(t *testing.T) {
 
 	out.Reset()
 	log.Info().Category(catA).Msg("hello world")
-	if got, want := decodeIfBinaryToString(out.Bytes()), `{"level":"info","foo":"bar","message":"hello world"}`+"\n"; got != want {
+	if got, want := decodeIfBinaryToString(out.Bytes()), ""; got != want {
 		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
 	}
 
